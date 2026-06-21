@@ -16,6 +16,7 @@ stack:
 
 ## Features
 
+- [ ] create elements
 - [ ] search in the inventory
 - [ ] increment elements
 - [ ] dicrement elements
