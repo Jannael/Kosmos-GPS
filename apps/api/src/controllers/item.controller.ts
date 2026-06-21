@@ -1,6 +1,18 @@
 export default {
-	list: async ({ limit, offset, search, account }: { limit?: number; offset?: number; search?: string; account: string }) => {
-		return { limit, offset, search, account }
+	list: async ({
+		limit,
+		offset,
+		search,
+		account,
+		enable,
+	}: {
+		limit?: number
+		offset?: number
+		search?: string
+		account: string
+		enable?: boolean
+	}) => {
+		return { limit, offset, search, account, enable }
 	},
 
 	get: async ({ id, account }: { id: string; account: string }) => {

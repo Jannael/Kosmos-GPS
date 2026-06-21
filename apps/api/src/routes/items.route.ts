@@ -19,7 +19,7 @@ const router = new Elysia({ prefix: '/inventory' })
 			limit: t.Optional(t.Number()),
 			offset: t.Optional(t.Number()),
 			search: t.Optional(t.String()),
-			a,
+			enable: t.Optional(t.Boolean()),
 		}),
 	})
 
