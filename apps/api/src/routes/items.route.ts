@@ -1,5 +1,6 @@
 import { Elysia, t } from 'elysia'
 import { auth } from '@/auth'
+import controllers from 'controllers'
 
 const router = new Elysia({ prefix: '/inventory' })
 	.derive(async ({ request, set }) => {
@@ -12,31 +13,37 @@ const router = new Elysia({ prefix: '/inventory' })
 		}
 		return { user: session.user }
 	})
-	.get('/list', ({ query }) => query, {
+
+	.get('/list', ({ query, user }) => controllers.items.list({ ...query, account: user.email }), {
 		query: t.Object({
 			limit: t.Optional(t.Number()),
 			offset: t.Optional(t.Number()),
 			search: t.Optional(t.String()),
+			a,
 		}),
 	})
-	.get('/item/:id', ({ params }) => ({ params }), {
+
+	.get('/item/:id', ({ params, user }) => controllers.items.get({ ...params, account: user.email }), {
 		params: t.Object({
 			id: t.String(),
 		}),
 	})
-	.post('/add', ({ body }) => body, {
+
+	.post('/add', ({ body, user }) => controllers.items.post({ ...body, account: user.email }), {
 		body: t.Object({
 			name: t.String(),
 		}),
 	})
-	.put('/update', ({ body }) => body, {
+
+	.put('/update', ({ body, user }) => controllers.items.update({ ...body, account: user.email }), {
 		body: t.Object({
 			id: t.String(),
 			name: t.Optional(t.String()),
 			enable: t.Optional(t.Boolean()),
 		}),
 	})
-	.delete('/delete/:id', ({ params }) => ({ params }), {
+
+	.delete('/delete/:id', ({ params, user }) => controllers.items.delete({ ...params, account: user.email }), {
 		params: t.Object({
 			id: t.String(),
 		}),

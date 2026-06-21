@@ -4,7 +4,8 @@
 		"module": "ES2022",
 		"paths": {
 			"@/*" : ["./src/*"],
-			"routes": ["./src/routes/index.ts"]
+			"routes": ["./src/routes/index.ts"],
+			"controllers": ["./src/controllers/index.ts"]
 		},
 		"types": ["bun-types"] ,
 		"esModuleInterop": true,
