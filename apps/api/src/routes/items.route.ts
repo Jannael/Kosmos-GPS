@@ -1,6 +1,17 @@
 import { Elysia, t } from 'elysia'
+import { auth } from '@/auth'
 
 const router = new Elysia({ prefix: '/inventory' })
+	.derive(async ({ request, set }) => {
+		const session = await auth.api.getSession({
+			headers: request.headers,
+		})
+		if (!session) {
+			set.status = 401
+			throw new Error('Unauthorized')
+		}
+		return { user: session.user }
+	})
 	.get('/list', ({ query }) => query, {
 		query: t.Object({
 			limit: t.Optional(t.Number()),
