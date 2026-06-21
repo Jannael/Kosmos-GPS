@@ -17,6 +17,7 @@
 | `bun run fmt` | Prettier (write) across the whole tree |
 | `bun run fmt:check` | Prettier (check only) |
 | `bun run prepare` | Install Husky hooks |
+| `npx ui-skills start` | Start the UI skills collection prompt |
 
 No typecheck or test commands exist.
 
