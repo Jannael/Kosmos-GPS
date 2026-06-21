@@ -5,4 +5,5 @@ export const usersTable = sqliteTable('inventory_items', {
 	name: text().notNull(),
 	enable: int('enable', { mode: 'boolean' }).notNull(),
 	account: text().notNull(),
+	deletedAt: text('deleted_at'),
 })
