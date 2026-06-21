@@ -1,4 +1,4 @@
-import { signIn } from '../lib/auth-client'
+import { signIn } from '@/lib/auth-client'
 
 export function SignInButton() {
 	return (
