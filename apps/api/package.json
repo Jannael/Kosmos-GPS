@@ -7,14 +7,16 @@
 	},
 	"dependencies": {
 		"@elysiajs/cors": "1.4.2",
-		"@libsql/client": "~0.8.0",
+		"@libsql/client": "0.17.4",
 		"@libsql/kysely-libsql": "0.4.1",
 		"better-auth": "1.6.19",
+		"drizzle-orm": "0.45.2",
 		"elysia": "1.4.28",
 		"kysely": "0.29.2"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"drizzle-kit": "0.31.10"
 	},
 	"module": "src/index.js"
 }
