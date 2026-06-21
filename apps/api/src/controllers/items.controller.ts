@@ -11,8 +11,8 @@ export default {
 		return { name, account }
 	},
 
-	update: async ({ id, name, account }: { id: string; name?: string; account: string }) => {
-		return { id, name, account }
+	update: async ({ id, name, account, deletedAt }: { id: string; name?: string; account: string; deletedAt?: string | null }) => {
+		return { id, name, account, deletedAt }
 	},
 
 	delete: async ({ id, account }: { id: string; account: string }) => {

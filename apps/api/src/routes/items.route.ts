@@ -38,6 +38,7 @@ const router = new Elysia({ prefix: '/inventory' })
 		body: t.Object({
 			id: t.String(),
 			name: t.Optional(t.String()),
+			deletedAt: t.Optional(t.Nullable(t.String())),
 		}),
 	})
 

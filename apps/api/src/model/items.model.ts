@@ -48,7 +48,16 @@ export default {
 		return db.insert(itemsTable).values({ id: crypto.randomUUID(), name, account }).returning().get()
 	},
 
-	updateItem: async ({ id, name, account }: { id: string; name?: string; account: string }) => {
+	updateItem: async ({ id, name, account, deletedAt }: { id: string; name?: string; account: string; deletedAt?: string | null }) => {
+		if (deletedAt !== undefined) {
+			return db
+				.update(itemsTable)
+				.set({ deletedAt })
+				.where(and(eq(itemsTable.id, id), eq(itemsTable.account, account)))
+				.returning()
+				.get()
+		}
+
 		if (name === undefined) return
 
 		return db
