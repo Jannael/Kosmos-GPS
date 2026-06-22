@@ -26,7 +26,7 @@ const app = new Elysia({ prefix: '/api' })
 
 	.listen(process.env.PORT ?? 3000)
 
-console.log(`Server running at ${app.server?.hostname}:${app.server?.port}`)
+console.log(`Server running at ${app.server?.hostname}:${app.server?.port}`, process.env)
 
 export type App = typeof app
 
