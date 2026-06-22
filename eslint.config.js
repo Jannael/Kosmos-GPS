@@ -12,6 +12,13 @@ const tsConfigs = typescriptEslint.configs.recommended.map((config) => ({
 
 export default [
 	{ ignores: ['**/dist/**', '**/node_modules/**', '**/build/**', '**/.astro/**'] },
+	{
+		languageOptions: {
+			globals: {
+				URL: 'readonly',
+			},
+		},
+	},
 	js.configs.recommended,
 	...tsConfigs,
 	...eslintPluginAstro.configs.recommended,
