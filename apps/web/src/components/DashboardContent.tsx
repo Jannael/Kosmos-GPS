@@ -3,11 +3,12 @@ import { useSession } from '@/lib/auth-client'
 import { UserDropdown } from '@/components/UserDropdown'
 import { SearchBar } from '@/components/SearchBar'
 import { AddItemForm } from '@/components/AddItemForm'
+import { ItemRow } from '@/components/ItemRow'
 import { useItemsStore } from '@/store/items'
 
 export function DashboardContent() {
 	const { data: session, isPending } = useSession()
-	const { items, loading, fetchItems } = useItemsStore()
+	const { items, loading, hasMore, fetchItems } = useItemsStore()
 
 	useEffect(() => {
 		fetchItems()
@@ -63,17 +64,26 @@ export function DashboardContent() {
 							<tr className="border-b border-gray-100 text-xs font-semibold tracking-wider text-gray-400 uppercase">
 								<th className="px-6 py-4">Nombre</th>
 								<th className="px-6 py-4">Cantidad</th>
+								<th className="px-6 py-4">Acciones</th>
 							</tr>
 						</thead>
 						<tbody>
 							{items.map((item) => (
-								<tr key={item.id} className="border-b border-gray-50 last:border-0">
-									<td className="px-6 py-4 font-medium text-gray-900">{item.name}</td>
-									<td className="px-6 py-4 text-gray-600">{item.count}</td>
-								</tr>
+								<ItemRow key={item.id} item={item} />
 							))}
 						</tbody>
 					</table>
+				)}
+				{hasMore && !loading && items.length > 0 && (
+					<div className="flex justify-center border-t border-gray-100 px-6 py-4">
+						<button
+							type="button"
+							onClick={() => fetchItems(false)}
+							className="cursor-pointer rounded-lg border border-gray-300 px-6 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+						>
+							Cargar más
+						</button>
+					</div>
 				)}
 			</div>
 		</div>

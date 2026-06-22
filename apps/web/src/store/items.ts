@@ -9,32 +9,47 @@ export type Item = {
 	deletedAt: string | null
 }
 
+const PAGE_SIZE = 20
+
 type ItemsStore = {
 	items: Item[]
 	search: string
 	loading: boolean
+	offset: number
+	hasMore: boolean
 	setSearch: (search: string) => void
 	setItems: (items: Item[]) => void
-	fetchItems: () => Promise<void>
+	fetchItems: (reset?: boolean) => Promise<void>
 	addItem: (name: string, count?: number) => Promise<void>
+	updateItemName: (id: string, name: string) => Promise<void>
+	updateCount: (id: string, newCount: number) => Promise<void>
+	deleteItem: (id: string) => Promise<void>
 }
 
 export const useItemsStore = create<ItemsStore>()((set, get) => ({
 	items: [],
 	search: '',
 	loading: false,
+	offset: 0,
+	hasMore: true,
 	setSearch: (search) => set({ search }),
 	setItems: (items) => set({ items }),
-	fetchItems: async () => {
-		const { search } = get()
+	fetchItems: async (reset = true) => {
+		const { search, offset } = get()
+		const nextOffset = reset ? 0 : offset
 		set({ loading: true })
 		const { data, error } = await getClient().api.inventory.list.get({
-			query: search ? { search } : undefined,
+			query: { limit: PAGE_SIZE, offset: nextOffset, ...(search ? { search } : {}) },
 		})
 		if (error) {
 			console.error('Failed to fetch items', error)
 		} else {
-			set({ items: data ?? [] })
+			const fetched = data ?? []
+			set({
+				items: reset ? fetched : [...get().items, ...fetched],
+				offset: nextOffset + fetched.length,
+				hasMore: fetched.length === PAGE_SIZE,
+			})
 		}
 		set({ loading: false })
 	},
@@ -42,6 +57,38 @@ export const useItemsStore = create<ItemsStore>()((set, get) => ({
 		const { error } = await getClient().api.inventory.add.post({ name, count })
 		if (error) {
 			console.error('Failed to add item', error)
+			return
+		}
+		await get().fetchItems()
+	},
+	updateItemName: async (id, name) => {
+		const { error } = await getClient().api.inventory.update.put({ id, name })
+		if (error) {
+			console.error('Failed to update item', error)
+			return
+		}
+		await get().fetchItems()
+	},
+	updateCount: async (id, newCount) => {
+		const prev = get().items
+		const idx = prev.findIndex((i) => i.id === id)
+		if (idx === -1) return
+		const oldCount = prev[idx].count
+		const updated = { ...prev[idx], count: newCount }
+		set({ items: [...prev.slice(0, idx), updated, ...prev.slice(idx + 1)] })
+		const { error } = await getClient().api.inventory.update.put({ id, count: newCount })
+		if (error) {
+			const reverted = { ...updated, count: oldCount }
+			set({ items: [...get().items.slice(0, idx), reverted, ...get().items.slice(idx + 1)] })
+		}
+	},
+	deleteItem: async (id) => {
+		const { error } = await getClient().api.inventory.update.put({
+			id,
+			deletedAt: new Date().toISOString(),
+		})
+		if (error) {
+			console.error('Failed to delete item', error)
 			return
 		}
 		await get().fetchItems()
