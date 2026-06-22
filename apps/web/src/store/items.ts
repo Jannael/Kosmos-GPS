@@ -62,12 +62,17 @@ export const useItemsStore = create<ItemsStore>()((set, get) => ({
 		await get().fetchItems()
 	},
 	updateItemName: async (id, name) => {
+		const prev = get().items
+		const idx = prev.findIndex((i) => i.id === id)
+		if (idx === -1) return
+		const oldName = prev[idx].name
+		const updated = { ...prev[idx], name }
+		set({ items: [...prev.slice(0, idx), updated, ...prev.slice(idx + 1)] })
 		const { error } = await getClient().api.inventory.update.put({ id, name })
 		if (error) {
-			console.error('Failed to update item', error)
-			return
+			const reverted = { ...updated, name: oldName }
+			set({ items: [...get().items.slice(0, idx), reverted, ...get().items.slice(idx + 1)] })
 		}
-		await get().fetchItems()
 	},
 	updateCount: async (id, newCount) => {
 		const prev = get().items
