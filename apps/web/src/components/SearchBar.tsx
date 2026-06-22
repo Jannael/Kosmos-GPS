@@ -3,7 +3,7 @@ import { useItemsStore } from '@/store/items'
 
 export function SearchBar() {
 	const { search, setSearch, fetchItems } = useItemsStore()
-	const timerRef = useRef<ReturnType<typeof setTimeout>>()
+	const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
 	useEffect(() => {
 		clearTimeout(timerRef.current)
