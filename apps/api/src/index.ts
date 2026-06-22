@@ -24,10 +24,11 @@ const app = new Elysia({ prefix: '/api' })
 	// routers
 	.use(routes.items)
 
-	.listen(process.env.PORT ?? 3000)
-
-console.log(`Server running at ${app.server?.hostname}:${app.server?.port}`, process.env)
+if (!process.env.VERCEL) {
+	app.listen(process.env.PORT ?? 3000)
+	console.log(`Server running at ${app.server?.hostname}:${app.server?.port}`)
+}
 
 export type App = typeof app
 
-export default app
+export default app.fetch
