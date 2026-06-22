@@ -1,13 +1,22 @@
+import { useEffect } from 'react'
 import { useSession } from '@/lib/auth-client'
 import { UserDropdown } from '@/components/UserDropdown'
+import { SearchBar } from '@/components/SearchBar'
+import { AddItemForm } from '@/components/AddItemForm'
+import { useItemsStore } from '@/store/items'
 
 export function DashboardContent() {
 	const { data: session, isPending } = useSession()
+	const { items, loading, fetchItems } = useItemsStore()
+
+	useEffect(() => {
+		fetchItems()
+	}, [fetchItems])
 
 	if (isPending) {
 		return (
 			<div className="flex min-h-[50vh] items-center justify-center">
-				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-[var(--color-primary)]" />
 			</div>
 		)
 	}
@@ -17,7 +26,10 @@ export function DashboardContent() {
 			<div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
 				<h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
 				<p className="text-gray-600">You need to sign in to view this page.</p>
-				<a href="/" className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700">
+				<a
+					href="/"
+					className="rounded-lg bg-[var(--color-primary)] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--color-primary)]/90"
+				>
 					Go to Sign In
 				</a>
 			</div>
@@ -25,26 +37,44 @@ export function DashboardContent() {
 	}
 
 	return (
-		<div className="mx-auto max-w-2xl px-4 py-12">
+		<div className="mx-auto max-w-4xl px-4 py-10">
 			<div className="mb-8 flex items-center justify-between">
-				<h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+				<h1 className="text-2xl font-bold text-gray-900">Inventario</h1>
 				<UserDropdown />
 			</div>
-			<div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-				<h2 className="text-lg font-semibold text-gray-900">Welcome, {session.user.name}!</h2>
-				<div className="space-y-2 text-sm text-gray-600">
-					<p>
-						<span className="font-medium text-gray-900">Email:</span> {session.user.email}
-					</p>
-					<p>
-						<span className="font-medium text-gray-900">User ID:</span> {session.user.id}
-					</p>
-					{session.user.emailVerified && (
-						<p>
-							<span className="font-medium text-gray-900">Email verified:</span> Yes
-						</p>
-					)}
+
+			<div className="mb-6 flex items-center gap-3">
+				<div className="flex-1">
+					<SearchBar />
 				</div>
+				<AddItemForm />
+			</div>
+
+			<div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+				{loading ? (
+					<div className="flex items-center justify-center py-20">
+						<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-[var(--color-primary)]" />
+					</div>
+				) : items.length === 0 ? (
+					<div className="py-20 text-center text-sm text-gray-400">No hay items</div>
+				) : (
+					<table className="w-full text-left text-sm">
+						<thead>
+							<tr className="border-b border-gray-100 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+								<th className="px-6 py-4">Nombre</th>
+								<th className="px-6 py-4">Cantidad</th>
+							</tr>
+						</thead>
+						<tbody>
+							{items.map((item) => (
+								<tr key={item.id} className="border-b border-gray-50 last:border-0">
+									<td className="px-6 py-4 font-medium text-gray-900">{item.name}</td>
+									<td className="px-6 py-4 text-gray-600">{item.count}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				)}
 			</div>
 		</div>
 	)
